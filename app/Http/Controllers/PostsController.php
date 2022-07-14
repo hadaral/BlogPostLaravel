@@ -17,7 +17,8 @@ class PostsController extends Controller
     
     public function __construct()
     {
-        $this->middleware('auth')->only(['create','store','edit','update','destroy']);
+        $this->middleware('auth')
+        ->only(['create','store','edit','update','destroy']);
     }
 
     /**
@@ -85,7 +86,6 @@ class PostsController extends Controller
         //         return $query->latest();
         //     }])->findOrFail($id)
         // ]);
-
         $blogPost = Cache::tags(['blog-post'])->remember("blog-post-{$id}",300,function() use($id){
             return BlogPost::with('comments','tags','user','comments.user')
                 ->findOrFail($id);

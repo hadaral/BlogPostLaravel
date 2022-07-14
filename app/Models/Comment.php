@@ -33,7 +33,7 @@ class Comment extends Model
 
         static::creating(function (Comment $comment){
             if($comment->commentable_type == BlogPost::class){
-                Cache::tags(['blog-post'])->forget("blog-post-{{$comment->commentable_id}}"); //because blog post comments was change and we have somthing to add
+                Cache::tags(['blog-post'])->forget("blog-post-{$comment->commentable_id}"); //because blog post comments was change and we have somthing to add
                 Cache::tags(['blog-post'])->forget('mostCommented');
             }
             
