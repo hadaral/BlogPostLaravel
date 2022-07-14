@@ -24,6 +24,6 @@ class ActivityComposer{
 
         $view->with('mostCommented' , $mostCommented);
         $view->with('mostActive' , $mostActive);
-        $view->with('mostActiveLastMoth' , $mostActiveLastMoth);
+        $view->with('mostActiveLastMonth' , $mostActiveLastMoth);
     }
 }

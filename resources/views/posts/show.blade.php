@@ -15,10 +15,10 @@
         @else
             <h1>
         @endif
-            {{$post->title}}
-            <x-badge show="{{now()->diffInMinutes($post->created_at) < 30}}" type="primary">
-                Brand New Post!
-            </x-badge>
+        {{$post->title}}
+        @badge(['show' => now()->diffInMinutes($post->created_at) < 30])
+                Brand new Post!
+        @endbadge
         @if($post->image)
             </h1>
             </div>
@@ -26,39 +26,31 @@
             </h1>
         @endif
 
-        <p>{{$post->content}}</p>
+        <p>{{ $post->content }}</p>
 
 
-        <x-updated :date="$post->created_at" name="{{$post->user->name}}">
-        </x-updated>
+        @updated(['date' => $post->created_at, 'name' => $post->user->name])
+        @endupdated
 
-        <x-updated :date="$post->updated_at">
+        @updated(['date' => $post->updated_at])
             Updated
-        </x-updated>
+        @endupdated
 
-        <x-tags :tags="$post->tags">
-        </x-tags>
+        @tags(['tags' => $post->tags])@endtags
 
         <p>Currently read by {{ $counter }} people</p>
         <h4>Comments</h4>
 
-        @include('comments._form')
+        @commentForm(['route' => route('posts.comments.store', ['post' => $post->id])])
+        @endcommentForm
 
-        @forelse($post->comments as $comment)
-        <p>
-            {{$comment->content}},
-        </p>
-        <p class="text-muted">
-            <x-updated :date="$comment->created_at" name="{{$comment->user->name}}"></x-updated>
-        </p>
-        @empty
-        <p>No comments yet!</p>
+        @commentList(['comments' => $post->comments])
+        @endcommentList
 
-        @endforelse
     </div>
     <div class="col-4">
         @include('posts._activity')
     </div>
 </div>
 
-@endsection
+@endsection('content')

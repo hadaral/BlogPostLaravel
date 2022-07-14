@@ -18,15 +18,10 @@
             @endif
             </h3>
 
-            <x-updated 
-                :date="$post->created_at" 
-                name="{{$post->user->name}}">
-                @slot( 'userId', $post->user->id )
-            </x-updated>
+            @updated(['date' => $post->created_at, 'name' => $post->user->name, 'userId' => $post->user->id])
+            @endupdated>
 
-            <x-tags 
-                :tags="$post->tags">
-            </x-tags>
+            @tags(['tags' => $post->tags])@endtags
 
             
             @if($post->comments_count)
