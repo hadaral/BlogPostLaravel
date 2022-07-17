@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Scopes\DeletedAdminScope;
 use App\Scopes\LatestScope;
+use App\Traits\Taggable;
 use Cache;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -15,6 +16,7 @@ class BlogPost extends Model
 {
 
     use SoftDeletes;
+    use Taggable;
 
     protected $fillable = ['title','content','user_id'];
 
@@ -24,10 +26,6 @@ class BlogPost extends Model
 
     public function user(){
         return $this->belongsTo(User::class);
-    }
-
-    public function tags(){
-        return $this->belongsToMany(Tag::class)->withTimestamps();
     }
 
     public function image(){
@@ -60,11 +58,11 @@ class BlogPost extends Model
         static::deleting(function (BlogPost $blogPost){
             $blogPost->comments()->delete();
             $blogPost->image()->delete();
-            Cache::tags(['blog-post'])->forget("blog-post-{{$blogPost->id}}");
+            Cache::tags(['blog-post'])->forget("blog-post-{$blogPost->id}");
         });
 
         static::updating(function (BlogPost $blogPost){
-            Cache::tags(['blog-post'])->forget("blog-post-{{$blogPost->id}}");
+            Cache::tags(['blog-post'])->forget("blog-post-{$blogPost->id}");
         });
 
         static::restoring(function(BlogPost $blogPost){
