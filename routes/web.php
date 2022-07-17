@@ -52,24 +52,6 @@ Route::get('/secret',[HomeController::class,'secret'])
     ->name('secret')
     ->middleware('can:home.secret');
 
-// $posts = [
-//     1 => [
-//         'title' => 'Intro to Laravel',
-//         'content' => 'This is a short intro to Laravel',
-//         'is_new' => true,
-//         'is_set' => true
-//     ],
-//     2 => [
-//         'title' => 'Intro to PHP',
-//         'content' => 'This is a short intro to PHP',
-//         'is_new' => false
-//     ],
-//     3 => [
-//         'title' => 'Intro to Golang',
-//         'content' => 'This is a short intro to Golang',
-//         'is_new' => false
-//     ]
-// ];
 
     //->only(['index','show','create','store','edit','update']);
 
