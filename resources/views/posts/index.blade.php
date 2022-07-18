@@ -19,21 +19,16 @@
             </h3>
 
             @updated(['date' => $post->created_at, 'name' => $post->user->name, 'userId' => $post->user->id])
-            @endupdated>
+            @endupdated
 
             @tags(['tags' => $post->tags])@endtags
 
-            
-            @if($post->comments_count)
-                <p>{{$post->comments_count}} comments</p>
-            @else
-                <p>No comments yet!</p>
-            @endif
+            {{ trans_choice('messages.comments', $post->comments_count)}}
 
             @auth
                 @can('update',$post)
                     <a href="{{ route('posts.edit', ['post'=>$post->id]) }}" 
-                        class="btn btn-primary">Edit
+                        class="btn btn-primary">{{ __('Edit') }}
                     </a>
                 @endcan
             @endauth
@@ -48,7 +43,7 @@
                         action="{{route('posts.destroy',['post' => $post->id])}}" method="POST">
                         @csrf
                         @method('DELETE')
-                        <input type="submit" value="Delete!" class="btn btn-primary">
+                        <input type="submit" value="{{ __('Delete!') }}" class="btn btn-primary">
                     </form>
                     @endcan
                 @endif
@@ -58,7 +53,7 @@
         
 
     @empty
-        No posts found!
+        <p>{{ __('No blog posts yet!') }}</p>
     @endforelse
     </div>
     <div class="col-4">

@@ -17,7 +17,7 @@
         @endif
         {{$post->title}}
         @badge(['show' => now()->diffInMinutes($post->created_at) < 30])
-                Brand new Post!
+            {{ __('Brand new Post!') }}
         @endbadge
         @if($post->image)
             </h1>
@@ -33,13 +33,14 @@
         @endupdated
 
         @updated(['date' => $post->updated_at])
-            Updated
+            {{ __('Updated') }}
         @endupdated
 
         @tags(['tags' => $post->tags])@endtags
 
-        <p>Currently read by {{ $counter }} people</p>
-        <h4>Comments</h4>
+        <p>{{ trans_choice('messages.people.reading', $counter) }}</p>
+        
+        <h4>{{ __('Comments') }}</h4>
 
         @commentForm(['route' => route('posts.comments.store', ['post' => $post->id])])
         @endcommentForm

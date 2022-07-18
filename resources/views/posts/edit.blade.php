@@ -11,6 +11,6 @@
 
     @include('posts._form')
 
-    <div><input type="submit" value="Update" class="btn btn-primary btn-block"></div>
+    <button type="submit" class="btn btn-primary btn-block">{{ __('Update!') }}</button>
 </form>
 @endsection
