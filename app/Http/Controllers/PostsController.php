@@ -2,19 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\BlogPostPosted;
+use App\Facades\CounterFacade;
 use App\Http\Requests\StorePost;
 use App\Models\BlogPost;
 use App\Models\Image;
-use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 
 class PostsController extends Controller
 {
-    
     public function __construct()
     {
         $this->middleware('auth')
@@ -67,6 +64,8 @@ class PostsController extends Controller
             );
         }
 
+        event(new BlogPostPosted($blogPost));
+
         $request->session()->flash('status','The BlogPost was created!'); 
 
         return redirect()->route('posts.show',['post' => $blogPost->id]);
@@ -80,55 +79,16 @@ class PostsController extends Controller
      */
     public function show($id)
     {
-        // abort_if(!isset($this->posts[$id]), 404);
-        // return view('posts.show', [
-        //     'post' => BlogPost::with(['comments'=> function($query){
-        //         return $query->latest();
-        //     }])->findOrFail($id)
-        // ]);
+
         $blogPost = Cache::tags(['blog-post'])->remember("blog-post-{$id}",300,function() use($id){
             return BlogPost::with('comments','tags','user','comments.user')
                 ->findOrFail($id);
         });
 
-        $sessionId = session()->getId(); //Get current user session
-        $counterKey = "blog-post-{$id}-counter"; //cache key how many users are on the page 
-        $usersKey = "blog-post-{$id}-users"; // cache key store information about users on the page
-
-        $users = Cache::tags(['blog-post'])->get($usersKey,[]);  //Useres  of  specific cache for specific blogPost [sessionId , lastVisitTime]
-        $usersUpdate = []; //all users that are not expired [sessionId,lastVisit]
-        $diffrence = 0; //how many new users to add to counter key
-        $now = now();
-
-        foreach($users as $session => $lastVisit){
-            if($now->diffInMinutes($lastVisit) >= 1){
-                $diffrence--;
-            }
-            else{
-                $usersUpdate[$session] = $lastVisit;
-            }
-        }
-
-        if(!array_key_exists($sessionId,$users) || $now->diffInMinutes($users[$sessionId]) >= 1){
-            $diffrence++;
-        }
-
-        $usersUpdate[$sessionId] = $now;
-        Cache::tags(['blog-post'])->forever($usersKey,$usersUpdate); //key of spesific blogPost, users that are on this blogPost
-
-        if(!Cache::tags(['blog-post'])->has($counterKey)){  //if i am the first user in the blogPost
-            Cache::tags(['blog-post'])->forever($counterKey,1);
-        }
-        else{
-            Cache::tags(['blog-post'])->increment($counterKey,$diffrence);
-        }
-
-        $counter = Cache::tags(['blog-post'])->get($counterKey);  //counter = how many users are in the spesific blogPost
-
 
         return view('posts.show', [
             'post' => $blogPost,
-            'counter' =>$counter,
+            'counter' =>CounterFacade::increment("blog-post-{$id}",['blog-post']),
         ]);
     }
 

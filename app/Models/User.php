@@ -12,6 +12,11 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
+    public const LOCALES = [
+        'en' => 'English',
+        'es' => 'Espanol',
+        'de' => 'Duetsch'
+    ];
     /**
      * The attributes that are mass assignable.
      *
@@ -76,5 +81,9 @@ class User extends Authenticatable
             return $query->where('commentable_id','=', $post->id)
                 ->where('commentable_type','=',BlogPost::class);
         });
+    }
+
+    public function scopeThatIsAnAdmin(Builder $query){
+        return $query->where('is_admin',true);
     }
 }
