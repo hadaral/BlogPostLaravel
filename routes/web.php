@@ -6,6 +6,8 @@ use App\http\Controllers\PostsController;
 use App\http\Controllers\PostTagController;
 use App\Http\Controllers\UserCommentController;
 use App\Http\Controllers\UserController;
+use App\Mail\CommentPostedMarkdown;
+use App\Models\Comment;
 //use App\http\Controllers\Auth;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -41,28 +43,15 @@ Route::resource('posts.comments',PostCommentController::class)->only(['store']);
 Route::resource('users.comments',UserCommentController::class)->only(['store']);
 Route::resource('users',UserController::class)->only(['show','edit','update']);
 
+Route::get('milable', function(){
+    $comment = Comment::find(1);
+    return new CommentPostedMarkdown($comment);
+});
+
 Route::get('/secret',[HomeController::class,'secret'])
     ->name('secret')
     ->middleware('can:home.secret');
 
-// $posts = [
-//     1 => [
-//         'title' => 'Intro to Laravel',
-//         'content' => 'This is a short intro to Laravel',
-//         'is_new' => true,
-//         'is_set' => true
-//     ],
-//     2 => [
-//         'title' => 'Intro to PHP',
-//         'content' => 'This is a short intro to PHP',
-//         'is_new' => false
-//     ],
-//     3 => [
-//         'title' => 'Intro to Golang',
-//         'content' => 'This is a short intro to Golang',
-//         'is_new' => false
-//     ]
-// ];
 
     //->only(['index','show','create','store','edit','update']);
 
