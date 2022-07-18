@@ -2,21 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\Contracts\CounterContract;
 use App\Events\BlogPostPosted;
 use App\Http\Requests\StorePost;
 use App\Models\BlogPost;
 use App\Models\Image;
-use App\Services\Counter;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 
 class PostsController extends Controller
 {
-    
-    public function __construct()
+    private $counter;
+    public function __construct(CounterContract $counter)
     {
         $this->middleware('auth')
         ->only(['create','store','edit','update','destroy']);
+        $this->counter = $counter;
     }
 
     /**
@@ -80,24 +81,16 @@ class PostsController extends Controller
      */
     public function show($id)
     {
-        // abort_if(!isset($this->posts[$id]), 404);
-        // return view('posts.show', [
-        //     'post' => BlogPost::with(['comments'=> function($query){
-        //         return $query->latest();
-        //     }])->findOrFail($id)
-        // ]);
+
         $blogPost = Cache::tags(['blog-post'])->remember("blog-post-{$id}",300,function() use($id){
             return BlogPost::with('comments','tags','user','comments.user')
                 ->findOrFail($id);
         });
 
-        $counter = new Counter();
-
-
 
         return view('posts.show', [
             'post' => $blogPost,
-            'counter' =>$counter->increment("blog-post-{$id}",['blog-post']),
+            'counter' =>$this->counter->increment("blog-post-{$id}",['blog-post']),
         ]);
     }
 
