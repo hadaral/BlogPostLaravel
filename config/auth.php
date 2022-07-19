@@ -44,7 +44,9 @@ return [
         'api' => [
             'driver' => 'token',
             'provider' => 'users',
-            'hash' => false,
+            // 'hash' => false,
+            // 'input_key' => 'api_token',
+            // 'storage_key' =>'api_token'
         ],
     ],
 
