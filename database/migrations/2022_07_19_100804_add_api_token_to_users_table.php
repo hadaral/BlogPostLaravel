@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddLocalToUsersTable extends Migration
+class AddApiTokenToUsersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,7 +14,10 @@ class AddLocalToUsersTable extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('local',3)->default('en');
+            $table->string('api_token', 80)->after('password')
+                        ->unique()
+                        ->nullable()
+                        ->default(null);
         });
     }
 
@@ -26,7 +29,7 @@ class AddLocalToUsersTable extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('local');
+            $table->dropColumn('api_token');
         });
     }
 }

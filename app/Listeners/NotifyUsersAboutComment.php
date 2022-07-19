@@ -18,7 +18,7 @@ class NotifyUsersAboutComment
      */
     public function handle(CommentPosted $event)
     {
-        dd('I was called in response to event');
+        // dd('I was called in response to event');
         //With RateLimit - Redis
         ThrottledMail::dispatch(
             new CommentPostedMarkdown($event->comment), $event->comment->commentable->user)
